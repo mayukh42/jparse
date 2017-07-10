@@ -1,0 +1,9 @@
+{
+  "date":/*
+      this is a multiline comment, with nested line comment.
+      // this is a line comment.*/{
+    "month":7,  // this is a line comment
+    /*"day":22, this is a block comment*/
+    "year":2017
+  }
+}

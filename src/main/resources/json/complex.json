@@ -1,0 +1,38 @@
+{
+  "date":{
+    "month":7,
+    "day":22,
+    "year":2017
+  },
+  "bags in kg":[
+    {
+      "handbag":12.34
+    },
+    {
+      "luggage":29.75
+    }
+  ],
+  "trip":{
+    "origin":"SFO",
+    "flight":{
+      "make":"boeing",
+      "gates":[
+        "3A",
+        "3C"
+      ],
+      "model":"747",
+      "carrier":"virgin"
+    },
+    "destination":"JFK"
+  },
+  "seats":[
+    "21A",
+    "21B"
+  ],
+  "meal":"non veg",
+  "person":{
+    "name":"alice",
+    "age":33,
+    "city":"San Francisco"
+  }
+}
