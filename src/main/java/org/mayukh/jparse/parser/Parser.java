@@ -105,7 +105,7 @@ public class Parser {
                     i++;
                 } else if (Objects.equals(state.peek(), State.KV) && c == ':') {
                     // key end
-                    String key = ((StringV) node.pop()).toString();
+                    String key = ((StringV) node.pop()).getValue();
                     keys.push(key.trim());
                     i++;
                 } else if (Objects.equals(state.peek(), State.KV) && c == ',') {

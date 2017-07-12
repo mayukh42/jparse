@@ -2,6 +2,7 @@ package org.mayukh.jparse.types;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by mayukh42 on 6/21/2017.
@@ -26,12 +27,27 @@ public class Json extends Value {
         if (key != null) content.put(key, value);
     }
 
+    public Set<String> keys() {
+        return content.keySet();
+    }
+
     /**
-     * TODO: Use ':' instead of '=' (proof of concept)
+     * toString(): manually create key:value pairs
      */
     @Override
     public String toString() {
-        String contentStr = content != null ? content.toString() : "{--null--}";
-        return contentStr.replaceAll("=", ":");
+        StringBuilder sb = new StringBuilder();
+        if (content == null) {
+            sb.append("{--null--}");
+            return sb.toString();
+        }
+
+        sb.append('{');
+        for (String key : content.keySet()) {
+            sb.append('"').append(key).append('"').append(':');
+            sb.append(content.get(key)).append(',');
+        }
+        sb.replace(sb.length()-1, sb.length(), "}");
+        return sb.toString();
     }
 }

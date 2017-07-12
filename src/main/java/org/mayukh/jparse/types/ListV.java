@@ -23,6 +23,10 @@ public class ListV extends Value {
         values.add(value);
     }
 
+    public List<Value> getValues() {
+        return values;
+    }
+
     @Override
     public String toString() {
         return values != null ? values.toString() : "[--null--]";

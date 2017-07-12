@@ -29,4 +29,12 @@ public class FileParserTest {
         Value json = parseFile(location, "simple.json");
         System.out.println(json);
     }
+
+    @Test
+    public void testKeys() {
+        Json json = (Json) parseFile(location, "complex.json");
+        System.out.println(json);               // RFC-4627 standard JSON (all strings in quotes)
+        System.out.println(json.keys());        // unquoted strings
+        System.out.println(json.get("date"));   // RFC-4627 standard JSON
+    }
 }

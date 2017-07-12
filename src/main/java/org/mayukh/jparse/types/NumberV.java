@@ -12,6 +12,10 @@ public class NumberV extends Value {
         this.value = value;
     }
 
+    public Number getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return value != null ? value.toString() : "--null--";
