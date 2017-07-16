@@ -5,5 +5,5 @@ package org.mayukh.jparse.parser;
  */
 public enum State {
 
-    JSON, KV, LIST, STRING, NUMBER, BLOCKCOMMENT, LINECOMMENT
+    JSON, KV, LIST, STRING, NUMBER, BLOCKCOMMENT, LINECOMMENT, EMPTYLIST, EMPTYJSON
 }

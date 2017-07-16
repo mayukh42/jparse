@@ -18,6 +18,6 @@ public class NumberV extends Value {
 
     @Override
     public String toString() {
-        return value != null ? value.toString() : "--null--";
+        return value != null ? value.toString() : "";
     }
 }

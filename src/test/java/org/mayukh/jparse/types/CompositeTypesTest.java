@@ -43,4 +43,9 @@ public class CompositeTypesTest {
             };
         System.out.println(json);
     }
+
+    @Test
+    public void testMapFunction() {
+
+    }
 }

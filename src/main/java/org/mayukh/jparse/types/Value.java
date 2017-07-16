@@ -8,8 +8,6 @@ package org.mayukh.jparse.types;
  *  JSON	::=	Map<String, Value>
  *  Value 	::= JSON | List | String
  *  Array 	::= JSON :: JSONS | String :: Strings
- *
- *  TODO: Implement true, false, and null literals
  */
 public abstract class Value {
 }

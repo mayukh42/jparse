@@ -81,6 +81,7 @@ public class Parser {
         Deque<Value> node = new ArrayDeque<>();
         Deque<String> keys = new ArrayDeque<>();
         String data = preprocess(raw);
+        boolean emptyList = false;
 
         try {
             for (int i = 0; i < data.length(); ) {
@@ -90,44 +91,53 @@ public class Parser {
                     state.push(State.JSON);
                     node.push(new Json());
                     i++;
-                } else if (Objects.equals(state.peek(), State.JSON) && c == '"') {
+                }
+                else if (Objects.equals(state.peek(), State.JSON) && c == '"') {
                     // key start (which also starts a string)
                     state.push(State.KV);   // in KV pair
                     state.push(State.STRING);  // key start
                     i++;
                     from = i;
-                } else if (Objects.equals(state.peek(), State.STRING) && c == '"') {
+                }
+                else if (Objects.equals(state.peek(), State.STRING) && c == '"') {
                     // string end
                     state.pop();
                     StringV value = new StringV(data.substring(from, i));
                     from = -1;
                     node.push(value);
                     i++;
-                } else if (Objects.equals(state.peek(), State.KV) && c == ':') {
+                }
+                else if (Objects.equals(state.peek(), State.KV) && c == ':') {
                     // key end
                     String key = ((StringV) node.pop()).getValue();
                     keys.push(key.trim());
                     i++;
-                } else if (Objects.equals(state.peek(), State.KV) && c == ',') {
+                }
+                else if (Objects.equals(state.peek(), State.KV) && c == ',') {
                     // a kv with value as a string or list or json has ended
                     Value value = node.pop();
                     String key = keys.pop();
                     Json parent = (Json) node.peek();
                     parent.add(key, value);
                     i++;
-                } else if ((Objects.equals(state.peek(), State.KV) || Objects.equals(state.peek(), State.LIST)) &&
+                }
+                else if ((Objects.equals(state.peek(), State.KV) || Objects.equals(state.peek(), State.LIST)) &&
                         c == '"') {
                     // stringv start
+                    if (Objects.equals(state.peek(), State.LIST)) emptyList = false;
                     state.push(State.STRING);
                     i++;
                     from = i;
-                } else if ((Objects.equals(state.peek(), State.KV) || Objects.equals(state.peek(), State.LIST)) &&
+                }
+                else if ((Objects.equals(state.peek(), State.KV) || Objects.equals(state.peek(), State.LIST)) &&
                         isNumberChar(c)) {
                     // numberV start
+                    if (Objects.equals(state.peek(), State.LIST)) emptyList = false;
                     from = i;
                     state.push(State.NUMBER);
                     i++;
-                } else if (Objects.equals(state.peek(), State.NUMBER) && !isNumberChar(c)) {
+                }
+                else if (Objects.equals(state.peek(), State.NUMBER) && !isNumberChar(c)) {
                     // numberV end
                     state.pop();
                     String numberStr = data.substring(from, i);
@@ -139,43 +149,61 @@ public class Parser {
                     node.push(value);
                     from = -1;
                     // don't i++ here
-                } else if (Objects.equals(state.peek(), State.KV) && c == '[') {
+                }
+                else if (Objects.equals(state.peek(), State.KV) && c == '[') {
                     // list start
                     state.push(State.LIST);
                     ListV list = new ListV(null);
                     node.push(list);
+                    emptyList = true; // at this instant, list is empty
                     i++;
-                } else if (Objects.equals(state.peek(), State.KV) && c == '{') {
+                }
+                else if (Objects.equals(state.peek(), State.KV) && c == '{') {
                     // value json start
                     state.push(State.JSON);
                     Json jsonV = new Json();
                     node.push(jsonV);
                     i++;
-                } else if (Objects.equals(state.peek(), State.LIST) && c == '{') {
+                }
+                else if (Objects.equals(state.peek(), State.LIST) && c == '{') {
                     // json element of list start
                     state.push(State.JSON);
                     Json jsonV = new Json();
                     node.push(jsonV);
+                    emptyList = false;      // since a JSON begins, list is no longer empty
                     i++;
-                } else if (Objects.equals(state.peek(), State.LIST) && c == ',') {
+                }
+                else if (Objects.equals(state.peek(), State.LIST) && c == ',') {
                     // list element ends
                     Value element = node.pop(); // pop the list element
                     ListV list = (ListV) node.peek();
                     list.add(element);
                     i++;
-                } else if (Objects.equals(state.peek(), State.LIST) && c == ']') {
-                    // json list ends
+                }
+                else if (Objects.equals(state.peek(), State.LIST) && c == ']') {
+                    // list ends
                     state.pop();
                     state.pop();    // list always ends a KV, so pop KV
 
-                    Value element = node.pop();         // pop the list element
-                    ListV list = (ListV) node.pop();    // pop the list
-                    list.add(element);
-                    String key = keys.pop();
-                    Json parent = (Json) node.peek();
-                    parent.add(key, list);
+                    if (!emptyList) {
+                        Value element = node.pop();         // pop the list element
+                        ListV list = (ListV) node.pop();    // pop the list
+                        list.add(element);
+                        String key = keys.pop();
+                        Json parent = (Json) node.peek();
+                        parent.add(key, list);
+                    }
+                    else {
+                        // empty list
+                        ListV list = (ListV) node.pop();    // pop the list
+                        String key = keys.pop();
+                        Json parent = (Json) node.peek();
+                        parent.add(key, list);
+                    }
+
                     i++;
-                } else if (Objects.equals(state.peek(), State.KV) && c == '}') {
+                }
+                else if (Objects.equals(state.peek(), State.KV) && c == '}') {
                     // last kv of current json
                     state.pop();    // pop KV
                     state.pop();    // pop JSON
@@ -184,11 +212,13 @@ public class Parser {
                     Json parent = (Json) node.peek();
                     parent.add(key, value);
                     i++;
-                } else if (Objects.equals(state.peek(), State.JSON) && c == '}') {
+                }
+                else if (Objects.equals(state.peek(), State.JSON) && c == '}') {
                     // end json
                     state.pop();
                     i++;
-                } else i++;
+                }
+                else i++;
             }
         }
         catch (Exception e) {

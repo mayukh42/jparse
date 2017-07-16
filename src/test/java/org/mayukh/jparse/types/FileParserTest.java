@@ -31,6 +31,12 @@ public class FileParserTest {
     }
 
     @Test
+    public void parseArrays() {
+        Value json = parseFile(location, "arrays.json");
+        System.out.println(json);
+    }
+
+    @Test
     public void testKeys() {
         Json json = (Json) parseFile(location, "complex.json");
         System.out.println(json);               // RFC-4627 standard JSON (all strings in quotes)

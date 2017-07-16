@@ -29,6 +29,6 @@ public class ListV extends Value {
 
     @Override
     public String toString() {
-        return values != null ? values.toString() : "[--null--]";
+        return values != null ? values.toString() : "[]";
     }
 }

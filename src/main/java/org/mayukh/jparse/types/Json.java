@@ -32,17 +32,16 @@ public class Json extends Value {
     }
 
     /**
-     * toString(): manually create key:value pairs
+     * toString()
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        if (content == null) {
-            sb.append("{--null--}");
+        sb.append('{');
+        if (content == null || content.keySet().size() == 0) {
+            sb.append('}');
             return sb.toString();
         }
-
-        sb.append('{');
         for (String key : content.keySet()) {
             sb.append('"').append(key).append('"').append(':');
             sb.append(content.get(key)).append(',');
