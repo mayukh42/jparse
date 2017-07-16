@@ -24,7 +24,7 @@ public class Parser {
     /** preprocess()
      *  remove block comments and inline comments
      */
-    private String preprocess(String raw) {
+    public String preprocess(String raw) {
         if (raw == null) return null;
 
         StringBuilder sb = new StringBuilder();
